@@ -1,0 +1,36 @@
+/* Login css */
+.login-card {
+  max-width: 500px;
+  line-height: 80px;
+  text-align: center;
+  margin: 10px auto;
+}
+
+.auth-card {
+  padding: 20px;
+  text-align: center;
+  margin-top: 30px;
+}
+
+/* signup */
+.already_accout {
+  font-family: "Courier New", Courier, monospace !important;
+  text-decoration: underline;
+  color: blue !important;
+}
+
+/* Profile */
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.item {
+  width: 30%;
+  margin-bottom: 10px;
+}
+
+.item:hover {
+  top: -34px;
+}
