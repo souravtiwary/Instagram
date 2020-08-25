@@ -17,7 +17,7 @@ function Signup() {
       M.toast({ html: "invalid email" });
       return;
     }
-    fetch("http://localhost:3001/signup", {
+    fetch("http://localhost:3000/signup", {
       method: "post",
       headers: {
         "Content-Type": "application/json",

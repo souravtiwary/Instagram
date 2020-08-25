@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useHistory } from "react-router-dom";
 import "./screen.css";
 import M from "materialize-css";
+import { UserContext } from "../../App";
 
 function SignIn() {
+  const { state, dispatch } = useContext(UserContext);
   const [password, setPasswod] = useState("");
   const [email, setEmail] = useState("");
   const history = useHistory();
@@ -16,7 +18,7 @@ function SignIn() {
       M.toast({ html: "invalid email" });
       return;
     }
-    fetch("http://localhost:3001/signin", {
+    fetch("/signin", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -32,6 +34,10 @@ function SignIn() {
         if (data.error) {
           M.toast({ html: data.error });
         } else {
+          //save token and user in local storage
+          localStorage.setItem("jwt", data.token);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          dispatch({ type: "USER", payload: data.user });
           M.toast({ html: "signed in successfully" });
           history.push("/");
         }

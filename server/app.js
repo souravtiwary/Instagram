@@ -1,7 +1,8 @@
+const mongoose = require("mongoose");
 const express = require("express");
 const app = express();
 const PORT = 5000;
-const mongoose = require("mongoose");
+
 const { MONGOURL } = require("./keys");
 
 // this will connect to mongo db using the link in MONGOURL

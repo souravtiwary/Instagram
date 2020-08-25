@@ -1,12 +1,12 @@
+const mongoose = require("mongoose");
+
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
-const { request } = require("express");
-const User = mongoose.model("User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken"); // whenever user signin provide web token
 const { JWT_SECRET } = require("../keys");
 const requireLogin = require("../middleware/requireLogin");
+const User = mongoose.model("User");
 
 router.post("/signup", (req, res) => {
   const { name, email, password } = req.body;

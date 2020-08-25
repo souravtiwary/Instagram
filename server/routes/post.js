@@ -1,12 +1,13 @@
+const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
+
 const requireLogin = require("../middleware/requireLogin");
 const Post = mongoose.model("Post");
 
-router.get("/allpost", (req, res) => {
+router.get("/allpost", requireLogin, (req, res) => {
   Post.find()
-    .populate("postedBy", "id", "name") // only id and the name will be open
+    .populate("postedBy", "_id name") // only id and the name will be open
     .then((posts) => {
       res.json({ posts });
     })
@@ -16,14 +17,15 @@ router.get("/allpost", (req, res) => {
 });
 
 router.post("/createpost", requireLogin, (req, res) => {
-  const { title, body } = req.body;
-  if (!title || !body) {
+  const { title, body, pic } = req.body;
+  if (!title || !body || !pic) {
     return res.status(422).json({ error: "Please add all the feilds" });
   }
   req.user.password = undefined;
   const post = new Post({
     title,
     body,
+    photo: pic,
     postedBy: req.user,
   });
   post

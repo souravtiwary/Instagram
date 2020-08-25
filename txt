@@ -1,0 +1,1 @@
+cloudninary will store the image and we will store url of img in MongoDB => souravcloud
