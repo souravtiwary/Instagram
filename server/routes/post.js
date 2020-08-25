@@ -39,7 +39,7 @@ router.post("/createpost", requireLogin, (req, res) => {
 
 router.get("/mypost", requireLogin, (req, res) => {
   Post.find({ postedBy: req.user._id })
-    .populate("postedBy", "_id") //"_id name"
+    .populate("postedBy", "_id name") //"_id name"
     .then((mypost) => {
       res.json({ mypost });
     })
@@ -48,7 +48,7 @@ router.get("/mypost", requireLogin, (req, res) => {
     });
 });
 
-router.put("/like", requireLogin, (res, req) => {
+router.put("/like", requireLogin, (req, res) => {
   Post.findByIdAndUpdate(
     req.body.postId,
     { $push: { likes: req.user._id } },
@@ -61,7 +61,7 @@ router.put("/like", requireLogin, (res, req) => {
     }
   });
 });
-router.put("/uplike", requireLogin, (res, req) => {
+router.put("/unlike", requireLogin, (req, res) => {
   Post.findByIdAndUpdate(
     req.body.postId,
     { $pull: { likes: req.user._id } },

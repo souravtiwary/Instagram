@@ -13,9 +13,44 @@ function Home() {
     })
       .then((res) => res.json())
       .then((result) => {
+        //console.log(result);
         setData(result.posts);
       });
   }, []);
+
+  const likePost = (id) => {
+    fetch("/like", {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({
+        postId: id,
+      }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+      });
+  };
+
+  const UnlikePost = (id) => {
+    fetch("/unlike", {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({
+        postId: id,
+      }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+      });
+  };
 
   return (
     <div className="home">
@@ -27,9 +62,25 @@ function Home() {
               <img src={item.photo} alt="Some Error Occured" />
             </div>
             <div className="card-content">
-              <i className="material-icons" style={{ color: "red" }}>
-                favorite
+              <i
+                className="material-icons"
+                //style={{ color: "blue" }}
+                onClick={() => {
+                  likePost(item._id);
+                }}
+              >
+                thumb_up
               </i>
+              <i
+                className="material-icons"
+                // style={{ color: "red" }}
+                onClick={() => {
+                  UnlikePost(item._id);
+                }}
+              >
+                thumb_down
+              </i>
+              <h6>{item.likes.length} likes</h6>
               <h6>{item.title}</h6>
               <p>{item.body}</p>
               <input type="text" placeholder="add comment" />
