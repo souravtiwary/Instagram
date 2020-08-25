@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
-
 const requireLogin = require("../middleware/requireLogin");
 const Post = mongoose.model("Post");
 
@@ -40,13 +39,40 @@ router.post("/createpost", requireLogin, (req, res) => {
 
 router.get("/mypost", requireLogin, (req, res) => {
   Post.find({ postedBy: req.user._id })
-    .populate("postedBy", "_id")
+    .populate("postedBy", "_id") //"_id name"
     .then((mypost) => {
       res.json({ mypost });
     })
     .catch((err) => {
       console.log(err);
     });
+});
+
+router.put("/like", requireLogin, (res, req) => {
+  Post.findByIdAndUpdate(
+    req.body.postId,
+    { $push: { likes: req.user._id } },
+    { new: true }
+  ).exec((err, result) => {
+    if (err) {
+      return res.status(422).json({ error: err });
+    } else {
+      res.json(result);
+    }
+  });
+});
+router.put("/uplike", requireLogin, (res, req) => {
+  Post.findByIdAndUpdate(
+    req.body.postId,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  ).exec((err, result) => {
+    if (err) {
+      return res.status(422).json({ error: err });
+    } else {
+      res.json(result);
+    }
+  });
 });
 
 module.exports = router;
