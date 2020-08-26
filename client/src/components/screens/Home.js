@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "./screen.css";
 import { useEffect } from "react";
+import { UserContext } from "../../App";
 
 function Home() {
   const [data, setData] = useState([]);
+  const { state, dispatch } = useContext(UserContext);
 
   useEffect(() => {
     fetch("/allpost", {
@@ -18,6 +20,35 @@ function Home() {
       });
   }, []);
 
+  const makeComment = (text, postId) => {
+    fetch("/commentonPost", {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({
+        text,
+        postId,
+      }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        const newData = data.map((item) => {
+          if (item._id === result._id) {
+            return result;
+          } else {
+            return item;
+          }
+        });
+        setData(newData);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   const likePost = (id) => {
     fetch("/like", {
       method: "put",
@@ -31,7 +62,18 @@ function Home() {
     })
       .then((res) => res.json())
       .then((result) => {
-        console.log(result);
+        //console.log(result);
+        const newData = data.map((item) => {
+          if (item._id === result._id) {
+            return result;
+          } else {
+            return item;
+          }
+        });
+        setData(newData);
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
 
@@ -48,7 +90,18 @@ function Home() {
     })
       .then((res) => res.json())
       .then((result) => {
-        console.log(result);
+        //console.log(result);
+        const newData = data.map((item) => {
+          if (item._id === result._id) {
+            return result;
+          } else {
+            return item;
+          }
+        });
+        setData(newData);
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
 
@@ -59,31 +112,52 @@ function Home() {
           <div className="card home-card" key={item._id}>
             <h5>{item.postedBy.name}</h5>
             <div className="card-image">
-              <img src={item.photo} alt="Some Error Occured" />
+              <img src={item.photo} alt="unable to fetch image" />
             </div>
             <div className="card-content">
-              <i
-                className="material-icons"
-                //style={{ color: "blue" }}
-                onClick={() => {
-                  likePost(item._id);
-                }}
-              >
-                thumb_up
-              </i>
-              <i
-                className="material-icons"
-                // style={{ color: "red" }}
-                onClick={() => {
-                  UnlikePost(item._id);
-                }}
-              >
-                thumb_down
-              </i>
+              {item.likes.includes(state._id) ? (
+                <i
+                  className="material-icons"
+                  // style={{ color: "red" }}
+                  onClick={() => {
+                    UnlikePost(item._id);
+                  }}
+                >
+                  thumb_down
+                </i>
+              ) : (
+                <i
+                  className="material-icons"
+                  //style={{ color: "blue" }}
+                  onClick={() => {
+                    likePost(item._id);
+                  }}
+                >
+                  thumb_up
+                </i>
+              )}
+
               <h6>{item.likes.length} likes</h6>
               <h6>{item.title}</h6>
               <p>{item.body}</p>
-              <input type="text" placeholder="add comment" />
+              {item.comments.map((record) => {
+                return (
+                  <h6 key={record._id}>
+                    <span style={{ fontWeight: "500" }}>
+                      {record.postedBy.name}
+                    </span>
+                    {record.text}
+                  </h6>
+                );
+              })}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  makeComment(e.target[0].value, item._id);
+                }}
+              >
+                <input type="text" placeholder="add comment" />
+              </form>
             </div>
           </div>
         );
